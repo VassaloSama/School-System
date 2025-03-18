@@ -308,20 +308,15 @@ class TestStringMethods(unittest.TestCase):
     
 
     # TESTES PROFESSORES
-
-    def test_professores_reseta(self):
-        r_lista = requests.get('http://localhost:5000/professores')
-        for professor in r_lista.json():
-            requests.delete(f'http://localhost:5000/professores/{professor["id"]}')
-        r_lista = requests.get('http://localhost:5000/professores')
-        self.assertEqual(len(r_lista.json()),0)
     
     def test_100_professores_retorna_lista(self):
+        r_reseta = requests.post('http://localhost:5000/resetar')
         r = requests.get('http://localhost:5000/professores')
         self.assertEqual(type(r.json()),type([]))
     
     # def test_100b_nao_confundir_professor_e_aluno(self):
-    #     self.test_professores_reseta()
+    #     r_reseta = requests.post('http://localhost:5000/resetar')
+    #    self.assertEqual(r_reseta.status_code,200)
     #     r = requests.post('http://localhost:5000/alunos',json={'nome':'fernando', 'idade': 12, 'data_nascimento': '2013-01-01'})
     #     self.assertEqual(r.status_code,200)
     #     r = requests.post('http://localhost:5000/alunos',json={'nome':'roberto', 'idade': 12, 'data_nascimento': '2013-01-01'})
@@ -332,7 +327,6 @@ class TestStringMethods(unittest.TestCase):
     #     self.assertEqual(len(r_lista_alunos.json()),2)
 
     def test_101_adiciona_professores(self):
-        self.test_professores_reseta()
         r = requests.post('http://localhost:5000/professores',json={'id': 1,'nome':'fernando','idade':27, 'materia': 'matematica'})
         r = requests.post('http://localhost:5000/professores',json={'id': 2,'nome':'roberto','idade':29, 'materia': 'devops'})
         r_lista = requests.get('http://localhost:5000/professores')
@@ -349,15 +343,16 @@ class TestStringMethods(unittest.TestCase):
             self.fail('professor roberto nao apareceu na lista de professores')
 
     def test_102_professores_por_id(self):
-        r = requests.post('http://localhost:5000/professores',json={'id': 3, 'nome':'mario','idade':37, 'materia':'portugues'})
-        r_lista = requests.get('http://localhost:5000/professores/3')
+        r = requests.post('http://localhost:5000/professores',json={'id': 7, 'nome':'mario','idade':37, 'materia':'portugues'})
+        r_lista = requests.get('http://localhost:5000/professores/7')
         self.assertEqual(r_lista.json()['nome'],'mario')
 
 
     def test_103_deleta(self):
-        self.test_professores_reseta()
-        requests.post('http://localhost:5000/professores',json={'nome':'cicero', 'idade': 27, 'materia': 'fisica'})
-        requests.post('http://localhost:5000/professores',json={'nome':'lucas','idade': 28, 'materia': 'quimica'})
+        r_reseta = requests.post('http://localhost:5000/resetar')
+        self.assertEqual(r_reseta.status_code,200)
+        requests.post('http://localhost:5000/professores',json={'id':1, 'nome':'cicero', 'idade': 27, 'materia': 'fisica'})
+        requests.post('http://localhost:5000/professores',json={'id':2, 'nome':'lucas','idade': 28, 'materia': 'quimica'})
         r_lista = requests.get('http://localhost:5000/professores')
         self.assertEqual(len(r_lista.json()),2)
         requests.delete('http://localhost:5000/professores/2')
@@ -365,44 +360,48 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(len(r_lista.json()),1)
     
     def test_104_edita(self):
-        self.test_professores_reseta()
-        requests.post('http://localhost:5000/professores',json={'nome':'lucas','idade':28, 'materia':'quimica'})
-        r_antes = requests.get('http://localhost:5000/professores/1')
+        r_reseta = requests.post('http://localhost:5000/resetar')
+        self.assertEqual(r_reseta.status_code,200)
+        requests.post('http://localhost:5000/professores',json={'id': 7, 'nome':'lucas','idade':28, 'materia':'quimica'})
+        r_antes = requests.get('http://localhost:5000/professores/7')
         self.assertEqual(r_antes.json()['nome'],'lucas')
-        requests.put('http://localhost:5000/professores/1', json={'nome':'lucas mendes'})
-        r_depois = requests.get('http://localhost:5000/professores/1')
+        requests.put('http://localhost:5000/professores/7', json={'nome':'lucas mendes'})
+        r_depois = requests.get('http://localhost:5000/professores/7')
         self.assertEqual(r_depois.json()['nome'],'lucas mendes')
 
     def test_105_id_inexistente(self):
-        self.test_professores_reseta()
+        r_reseta = requests.post('http://localhost:5000/resetar')
+        self.assertEqual(r_reseta.status_code,200)
         r = requests.put('http://localhost:5000/professores/15',json={'nome':'bowser'})
         self.assertEqual(r.status_code,404)
-        self.assertEqual(r.json()['message'],'Professor não encontrado!')
+        self.assertEqual(r.json()['erro'],'Professor não encontrado!')
         r = requests.get('http://localhost:5000/professores/15')
         self.assertEqual(r.status_code,404)
-        self.assertEqual(r.json()['message'],'Professor não encontrado!')
+        self.assertEqual(r.json()['erro'],'Professor não encontrado!')
         r = requests.delete('http://localhost:5000/professores/15')
         self.assertEqual(r.status_code,404)
-        self.assertEqual(r.json()['message'],'Professor não encontrado!')
+        self.assertEqual(r.json()['erro'],'Professor não encontrado!')
 
     def test_106_post_ou_put_sem_dados_obrigatorios(self):
-        self.test_professores_reseta()
-        r = requests.post('http://localhost:5000/professores',json={'idade': 28, 'materia': 'quimica'})
+        r_reseta = requests.post('http://localhost:5000/resetar')
+        self.assertEqual(r_reseta.status_code,200)
+        r = requests.post('http://localhost:5000/professores',json={'id': 1,'idade': 28, 'materia': 'quimica'})
         self.assertEqual(r.status_code,400)
-        self.assertEqual(r.json()['message'],'Dados inválidos!')
-        r = requests.post('http://localhost:5000/professores',json={'nome':'maximus','idade': 37, 'materia': 'portugues'})
+        self.assertEqual(r.json()['erro'],'Campo nome é obrigatório!')
+        r = requests.post('http://localhost:5000/professores',json={'id': 1, 'nome':'maximus','idade': 28, 'materia': 'quimica'})
         self.assertEqual(r.status_code,201)
-        r = requests.put('http://localhost:5000/professores/1',json={'idade': 38})
+        r = requests.put('http://localhost:5000/professores/1',json={'idade': 47})
         self.assertEqual(r.status_code,200)
         r = requests.put('http://localhost:5000/professores/1',json={})
         self.assertEqual(r.status_code,400)
-        self.assertEqual(r.json()['message'],'Dados inválidos!')
+        self.assertEqual(r.json()['erro'],'Dados Inválidos!')
 
     def test_107_nao_confundir_professor_e_aluno(self):
-        self.test_professores_reseta()
-        r = requests.post('http://localhost:5000/professores',json={'nome':'fernando','idade': 27, 'materia': 'matematica'})
+        r_reseta = requests.post('http://localhost:5000/resetar')
+        self.assertEqual(r_reseta.status_code,200)
+        r = requests.post('http://localhost:5000/professores',json={'id': 2, 'nome':'fernando','idade': 27, 'materia': 'matematica'})
         self.assertEqual(r.status_code,201)
-        r = requests.post('http://localhost:5000/professores',json={'nome':'roberto','idade': 29, 'materia': 'devops'})
+        r = requests.post('http://localhost:5000/professores',json={'id': 3, 'nome':'roberto','idade': 29, 'materia': 'devops'})
         self.assertEqual(r.status_code,201)
         r_lista = requests.get('http://localhost:5000/professores')
         self.assertEqual(len(r_lista.json()),2)
