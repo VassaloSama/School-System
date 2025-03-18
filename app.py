@@ -39,6 +39,19 @@ def post_professor():
     
     return jsonify(novo_professor.serialize()), 201
 
+# GET ALL PROFESSORES
+@app.route('/professores', methods=['GET'])
+def listar_professores():
+    return jsonify(list(professores.values())), 200
+
+# GET BY ID PROFESSORES
+@app.route('/professores/<int:id>', methods=['GET'])
+def obter_professor(id):
+    if id not in professores:
+        return jsonify({"erro": "Professor não encontrado!"}), 404
+    
+    return jsonify(professores[id]), 200
+
 # Rodar o servidor
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
