@@ -156,9 +156,7 @@ def deletar_turma(id):
     del turmas[id]
     return jsonify({"mensagem": "Turma deletada com sucesso!"}), 200
 
-# Rodar o servidor
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+
 
 #### ROTA ALUNOS ####
 class Aluno:
@@ -218,3 +216,22 @@ def criar_aluno():
     )
 
     return jsonify(novo_aluno.serialize()), 201
+
+# GET ALL ALUNOS
+@app.route('/alunos', methods=['GET'])
+def listar_alunos():
+    return jsonify(list(alunos.values())), 200
+
+# GET BY ID ALUNOS
+@app.route('/alunos/<int:id>', methods=['GET'])
+def obter_aluno(id):
+    if id not in alunos:
+        return jsonify({"erro": "Aluno não encontrado!"}), 404
+    
+    return jsonify(alunos[id]), 200
+
+
+
+# Rodar o servidor
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
