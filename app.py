@@ -295,7 +295,7 @@ def atualizar_aluno(id):
     # Recalcular a média final
     alunos[id]["media_final"] = (alunos[id]["nota_primeiro_semestre"] + alunos[id]["nota_segundo_semestre"]) / 2
     
-    return jsonify(alunos[id]), 200
+    return jsonify({"message": "Aluno alterado com sucesso!"}), 200
     
 # DELETE ALUNOS
 @app.route('/alunos/<int:id>', methods=['DELETE'])
