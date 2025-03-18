@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-import datetime
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -212,6 +212,10 @@ class Aluno:
 @app.route('/alunos', methods=['POST'])
 def criar_aluno():
     dados = request.json
+    for campo in ["id", "nome", "idade", "data_nascimento", "nota_primeiro_semestre" , "nota_segundo_semestre"]:
+        if campo not in dados:
+            return jsonify({"erro": f"Campo {campo} é obrigatório!"}), 400
+        
     id = dados.get("id")
     
     if id in alunos:
@@ -222,16 +226,16 @@ def criar_aluno():
         return jsonify({"erro": "Turma não encontrada!"}), 404
 
     try:
-        datetime.strptime(dados["data_nascimento"], "%Y-%m-%d")
+        data_formatada = datetime.strptime(dados["data_nascimento"], "%d-%m-%Y").strftime("%Y-%m-%d")
     except ValueError:
-        return jsonify({"erro": "Formato da data de nascimento inválido! Use YYYY-MM-DD"}), 400
+        return jsonify({"erro": "Formato da data de nascimento inválido! Use DD-MM-YYYY"}), 400
 
     novo_aluno = Aluno(
         id, 
         dados["nome"], 
-        dados["idade"], 
+        dados["idade"],
         turma_id, 
-        dados["data_nascimento"], 
+        data_formatada, 
         dados["nota_primeiro_semestre"], 
         dados["nota_segundo_semestre"]
     )
