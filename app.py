@@ -52,6 +52,22 @@ def obter_professor(id):
     
     return jsonify(professores[id]), 200
 
+# PUT PROFESSORES
+@app.route('/professores/<int:id>', methods=['PUT'])
+def atualizar_professor(id):
+    if id not in professores:
+        return jsonify({"erro": "Professor não encontrado!"}), 404
+    
+    dados = request.json
+    professores[id].update(
+        {
+            "nome": dados["nome"],
+            "idade": dados["idade"],
+            "materia": dados["materia"]
+        }
+    )
+
+
 # Rodar o servidor
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
