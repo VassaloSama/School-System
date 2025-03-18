@@ -67,6 +67,17 @@ def atualizar_professor(id):
         }
     )
 
+# DELETE PROFESSORES
+@app.route('/professores/<int:id>', methods=['DELETE'])
+def deletar_professor(id):
+    if id not in professores:
+        return jsonify({"erro": "Professor não encontrado!"}), 404
+    
+    del professores[id]
+    return jsonify({"mensagem": "Professor deletado com sucesso!"}), 200
+
+
+
 
 # Rodar o servidor
 if __name__ == '__main__':
