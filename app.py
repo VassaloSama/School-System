@@ -226,7 +226,7 @@ def criar_aluno():
         return jsonify({"erro": "Turma não encontrada!"}), 404
 
     try:
-        data_formatada = datetime.strptime(dados["data_nascimento"], "%d-%m-%Y").strftime("%Y-%m-%d")
+        data_formatada = datetime.strptime(dados["data_nascimento"], "%d-%m-%Y").strftime("%d-%m-%Y")
     except ValueError:
         return jsonify({"erro": "Formato da data de nascimento inválido! Use DD-MM-YYYY"}), 400
 
@@ -258,6 +258,11 @@ def obter_aluno(id):
 # PUT ALUNOS
 @app.route('/alunos/<int:id>', methods=['PUT'])
 def atualizar_aluno(id):
+    dados = request.json
+
+    if not any(campo in dados for campo in ["nome", "idade", "turma_id", "data_nascimento", "nota_primeiro_semestre", "nota_segundo_semestre"]):
+        return jsonify({"erro": "Dados Inválidos!"}), 400
+    
     if id not in alunos:
         return jsonify({"erro": "Aluno não encontrado!"}), 404
     
@@ -269,24 +274,29 @@ def atualizar_aluno(id):
 
     try:
         if "data_nascimento" in dados:
-            datetime.strptime(dados["data_nascimento"], "%Y-%m-%d")
+            dados["data_nascimento"] = datetime.strptime(dados["data_nascimento"], "%d-%m-%Y").strftime("%Y-%m-%d")
     except ValueError:
-        return jsonify({"erro": "Formato da data de nascimento inválido! Use YYYY-MM-DD"}), 400
+        return jsonify({"erro": "Formato da data de nascimento inválido! Use DD-MM-YYYY"}), 400
 
-    alunos[id].update({
-        "nome": dados.get("nome", alunos[id]["nome"]),
-        "idade": dados.get("idade", alunos[id]["idade"]),
-        "turma_id": turma_id,
-        "data_nascimento": dados.get("data_nascimento", alunos[id]["data_nascimento"]),
-        "nota_primeiro_semestre": float(dados.get("nota_primeiro_semestre", alunos[id]["nota_primeiro_semestre"])),
-        "nota_segundo_semestre": float(dados.get("nota_segundo_semestre", alunos[id]["nota_segundo_semestre"]))
-    })
+    # Atualiza apenas os campos que foram enviados na requisição
+    if "nome" in dados:
+        alunos[id]["nome"] = dados["nome"]
+    if "idade" in dados:
+        alunos[id]["idade"] = dados["idade"]
+    if "turma_id" in dados:
+        alunos[id]["turma_id"] = dados["turma_id"]
+    if "data_nascimento" in dados:
+        alunos[id]["data_nascimento"] = dados["data_nascimento"]
+    if "nota_primeiro_semestre" in dados:
+        alunos[id]["nota_primeiro_semestre"] = dados["nota_primeiro_semestre"]
+    if "nota_segundo_semestre" in dados:
+        alunos[id]["nota_segundo_semestre"] = dados["nota_segundo_semestre"]
 
     # Recalcular a média final
     alunos[id]["media_final"] = (alunos[id]["nota_primeiro_semestre"] + alunos[id]["nota_segundo_semestre"]) / 2
     
     return jsonify(alunos[id]), 200
-
+    
 # DELETE ALUNOS
 @app.route('/alunos/<int:id>', methods=['DELETE'])
 def deletar_aluno(id):
