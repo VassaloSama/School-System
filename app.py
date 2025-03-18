@@ -230,6 +230,38 @@ def obter_aluno(id):
     
     return jsonify(alunos[id]), 200
 
+# PUT ALUNOS
+@app.route('/alunos/<int:id>', methods=['PUT'])
+def atualizar_aluno(id):
+    if id not in alunos:
+        return jsonify({"erro": "Aluno não encontrado!"}), 404
+    
+    dados = request.json
+    turma_id = dados.get("turma_id", alunos[id]["turma_id"])
+
+    if turma_id not in turmas:
+        return jsonify({"erro": "Turma não encontrada!"}), 404
+
+    try:
+        if "data_nascimento" in dados:
+            datetime.strptime(dados["data_nascimento"], "%Y-%m-%d")
+    except ValueError:
+        return jsonify({"erro": "Formato da data de nascimento inválido! Use YYYY-MM-DD"}), 400
+
+    alunos[id].update({
+        "nome": dados.get("nome", alunos[id]["nome"]),
+        "idade": dados.get("idade", alunos[id]["idade"]),
+        "turma_id": turma_id,
+        "data_nascimento": dados.get("data_nascimento", alunos[id]["data_nascimento"]),
+        "nota_primeiro_semestre": float(dados.get("nota_primeiro_semestre", alunos[id]["nota_primeiro_semestre"])),
+        "nota_segundo_semestre": float(dados.get("nota_segundo_semestre", alunos[id]["nota_segundo_semestre"]))
+    })
+
+    # Recalcular a média final
+    alunos[id]["media_final"] = (alunos[id]["nota_primeiro_semestre"] + alunos[id]["nota_segundo_semestre"]) / 2
+    
+    return jsonify(alunos[id]), 200
+
 
 
 # Rodar o servidor
