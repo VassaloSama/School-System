@@ -262,6 +262,15 @@ def atualizar_aluno(id):
     
     return jsonify(alunos[id]), 200
 
+# DELETE ALUNOS
+@app.route('/alunos/<int:id>', methods=['DELETE'])
+def deletar_aluno(id):
+    if id not in alunos:
+        return jsonify({"erro": "Aluno não encontrado!"}), 404
+    
+    del alunos[id]
+    return jsonify({"mensagem": "Aluno deletado com sucesso!"}), 200
+
 
 
 # Rodar o servidor
