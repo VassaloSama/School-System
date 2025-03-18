@@ -96,6 +96,23 @@ class Turmas:
     
     def serialize(self):
         return turmas[self.id]
+    
+# POST TURMAS
+@app.route('/turmas', methods=['POST'])
+def criar_turma():
+    dados = request.json
+    id = dados.get("id")
+    
+    if id in turmas:
+        return jsonify({"erro": "Turma com esse ID já existe!"}), 400
+    
+    professor_id = dados.get("professor_id")
+    if professor_id not in professores:
+        return jsonify({"erro": "Professor não encontrado!"}), 404
+
+    nova_turma = Turmas(id, dados["descricao"], professor_id, dados["ativo"])
+    
+    return jsonify(nova_turma.serialize()), 201
 
 
 
