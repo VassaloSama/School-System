@@ -8,6 +8,16 @@ alunos = {}
 turmas = {}
 professores = {}
 
+#### ROTA RESETAR DADOS ####
+@app.route('/resetar', methods=['POST'])
+def resetar_dados():
+    global alunos, turmas, professores
+    alunos = {}
+    turmas = {}
+    professores = {}
+    return jsonify({"mensagem": "Dados resetados com sucesso!"}), 200
+
+
 #### ROTA PROFESSORES ####
 class Professores:
     def __init__(self, id, nome, idade, materia):
