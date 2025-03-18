@@ -188,3 +188,33 @@ class Aluno:
     
     def serialize(self):
         return alunos[self.id]
+
+# POST ALUNOS
+@app.route('/alunos', methods=['POST'])
+def criar_aluno():
+    dados = request.json
+    id = dados.get("id")
+    
+    if id in alunos:
+        return jsonify({"erro": "Aluno com esse ID já existe!"}), 400
+
+    turma_id = dados.get("turma_id")
+    if turma_id not in turmas:
+        return jsonify({"erro": "Turma não encontrada!"}), 404
+
+    try:
+        datetime.strptime(dados["data_nascimento"], "%Y-%m-%d")
+    except ValueError:
+        return jsonify({"erro": "Formato da data de nascimento inválido! Use YYYY-MM-DD"}), 400
+
+    novo_aluno = Aluno(
+        id, 
+        dados["nome"], 
+        dados["idade"], 
+        turma_id, 
+        dados["data_nascimento"], 
+        dados["nota_primeiro_semestre"], 
+        dados["nota_segundo_semestre"]
+    )
+
+    return jsonify(novo_aluno.serialize()), 201
