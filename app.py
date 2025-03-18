@@ -26,7 +26,18 @@ class Professores:
     def serialize(self):
         return professores[self.id]
     
-
+# POST PROFESSORES
+@app.route('/professores', methods=['POST'])
+def post_professor():
+    dados = request.json
+    id = dados.get("id")
+    
+    if id in professores:
+        return jsonify({"erro": "Professor com esse ID já existe!"}), 400
+    
+    novo_professor = Professores(id, dados["nome"], dados["idade"], dados["materia"])
+    
+    return jsonify(novo_professor.serialize()), 201
 
 # Rodar o servidor
 if __name__ == '__main__':
