@@ -114,7 +114,18 @@ def criar_turma():
     
     return jsonify(nova_turma.serialize()), 201
 
-
+# GET ALL TURMAS
+@app.route('/turmas', methods=['GET'])
+def listar_turmas():
+    return jsonify(list(turmas.values())), 200
+ 
+# GET BY ID TURMAS
+@app.route('/turmas/<int:id>', methods=['GET'])
+def obter_turma(id):
+    if id not in turmas:
+        return jsonify({"erro": "Turma não encontrada!"}), 404
+    
+    return jsonify(turmas[id]), 200
 
 
 # Rodar o servidor
