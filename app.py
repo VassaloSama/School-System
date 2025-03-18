@@ -240,7 +240,7 @@ def criar_aluno():
         dados["nota_segundo_semestre"]
     )
 
-    return jsonify({"mensagem": "Aluno deletado com sucesso!"}), 201
+    return jsonify({"mensagem": "Aluno criado com sucesso!"}), 201
 
 # GET ALL ALUNOS
 @app.route('/alunos', methods=['GET'])
