@@ -122,6 +122,10 @@ class Turmas:
 @app.route('/turmas', methods=['POST'])
 def criar_turma():
     dados = request.json
+    for campo in ["id", "descricao", "professor_id", "ativo"]:
+        if campo not in dados:
+            return jsonify({"erro": f"Campo {campo} é obrigatório!"}), 400
+
     id = dados.get("id")
     
     if id in turmas:
@@ -133,7 +137,7 @@ def criar_turma():
 
     nova_turma = Turmas(id, dados["descricao"], professor_id, dados["ativo"])
     
-    return jsonify(nova_turma.serialize()), 201
+    return jsonify({"message": "Turma criada com sucesso"}), 201
 
 # GET ALL TURMAS
 @app.route('/turmas', methods=['GET'])
@@ -154,6 +158,9 @@ def atualizar_turma(id):
     if id not in turmas:
         return jsonify({"erro": "Turma não encontrada!"}), 404
     
+    if not any(campo in dados for campo in ["descricao", "professor_id", "ativo"]):
+        return jsonify({"erro": "Dados Inválidos!"}), 400
+    
     dados = request.json
     professor_id = dados.get("professor_id", turmas[id]["professor_id"])
 
@@ -166,7 +173,7 @@ def atualizar_turma(id):
         "ativo": dados.get("ativo", turmas[id]["ativo"])
     })
     
-    return jsonify(turmas[id]), 200
+    return jsonify({"message": "Turma atualizada com sucesso"}), 200
 
 # DELETE TURMAS
 @app.route('/turmas/<int:id>', methods=['DELETE'])

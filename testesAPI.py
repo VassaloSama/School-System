@@ -410,7 +410,28 @@ class TestStringMethods(unittest.TestCase):
 
 
     # TESTE TURMAS
+
+    def test_200_turmas_retorna_lista(self):
+        r_reseta = requests.post('http://localhost:5000/resetar')
+        r = requests.get('http://localhost:5000/turmas')
+        self.assertEqual(type(r.json()),type([]))
   
+    def test_201_adiciona_turmas(self):
+        r = requests.post('http://localhost:5000/professores',json={'id': 1,'nome':'fernando','idade':27, 'materia': 'matematica'})
+        r = requests.post('http://localhost:5000/turmas',json={'id': 1,'descricao':'sala mat','professor_id': 1, 'ativo': True})
+        r = requests.post('http://localhost:5000/turmas',json={'id': 2,'descricao':'sala dev','professor_id': 1, 'ativo': True})
+        r_lista = requests.get('http://localhost:5000/turmas')
+        achei_turma1 = False
+        achei_turma2 = False
+        for turma in r_lista.json():
+            if turma['id'] == 1:
+                achei_turma1 = True
+            if turma['id'] == 2:
+                achei_turma2 = True
+        if not achei_turma1:
+            self.fail('Turma 1 não apareceu na lista de turmas')
+        if not achei_turma2:
+            self.fail('Turma 2 não apareceu na lista de turmas')
 
 
 def runTests():
