@@ -127,6 +127,34 @@ def obter_turma(id):
     
     return jsonify(turmas[id]), 200
 
+# PUT TURMAS
+@app.route('/turmas/<int:id>', methods=['PUT'])
+def atualizar_turma(id):
+    if id not in turmas:
+        return jsonify({"erro": "Turma não encontrada!"}), 404
+    
+    dados = request.json
+    professor_id = dados.get("professor_id", turmas[id]["professor_id"])
+
+    if professor_id not in professores:
+        return jsonify({"erro": "Professor não encontrado!"}), 404
+
+    turmas[id].update({
+        "descricao": dados.get("descricao", turmas[id]["descricao"]),
+        "professor_id": professor_id,
+        "ativo": dados.get("ativo", turmas[id]["ativo"])
+    })
+    
+    return jsonify(turmas[id]), 200
+
+# DELETE TURMAS
+@app.route('/turmas/<int:id>', methods=['DELETE'])
+def deletar_turma(id):
+    if id not in turmas:
+        return jsonify({"erro": "Turma não encontrada!"}), 404
+    
+    del turmas[id]
+    return jsonify({"mensagem": "Turma deletada com sucesso!"}), 200
 
 # Rodar o servidor
 if __name__ == '__main__':
