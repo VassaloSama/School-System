@@ -59,13 +59,16 @@ def atualizar_professor(id):
         return jsonify({"erro": "Professor não encontrado!"}), 404
     
     dados = request.json
-    professores[id].update(
-        {
-            "nome": dados["nome"],
-            "idade": dados["idade"],
-            "materia": dados["materia"]
-        }
-    )
+    
+    # Atualiza apenas os campos que foram enviados na requisição
+    if "nome" in dados:
+        professores[id]["nome"] = dados["nome"]
+    if "idade" in dados:
+        professores[id]["idade"] = dados["idade"]
+    if "materia" in dados:
+        professores[id]["materia"] = dados["materia"]
+
+    return jsonify(professores[id]), 200
 
 # DELETE PROFESSORES
 @app.route('/professores/<int:id>', methods=['DELETE'])
