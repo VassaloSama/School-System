@@ -410,7 +410,47 @@ class TestStringMethods(unittest.TestCase):
 
 
     # TESTE TURMAS
+
+    def test_200_turmas_retorna_lista(self):
+        r_reseta = requests.post('http://localhost:5000/resetar')
+        r = requests.get('http://localhost:5000/turmas')
+        self.assertEqual(type(r.json()),type([]))
   
+    def test_201_adiciona_turmas(self):
+        r = requests.post('http://localhost:5000/professores',json={'id': 1,'nome':'fernando','idade':27, 'materia': 'matematica'})
+        r = requests.post('http://localhost:5000/turmas',json={'id': 1,'descricao':'sala mat','professor_id': 1, 'ativo': True})
+        r = requests.post('http://localhost:5000/turmas',json={'id': 2,'descricao':'sala dev','professor_id': 1, 'ativo': True})
+        r_lista = requests.get('http://localhost:5000/turmas')
+        achei_turma1 = False
+        achei_turma2 = False
+        for turma in r_lista.json():
+            if turma['id'] == 1:
+                achei_turma1 = True
+            if turma['id'] == 2:
+                achei_turma2 = True
+        if not achei_turma1:
+            self.fail('Turma 1 não apareceu na lista de turmas')
+        if not achei_turma2:
+            self.fail('Turma 2 não apareceu na lista de turmas')
+    
+    def test_202_turma_por_id(self):
+        r = requests.post('http://localhost:5000/turmas',json={'id': 3,'descricao':'sala 08','professor_id': 1, 'ativo': True})
+        r_lista = requests.get('http://localhost:5000/turmas/3')
+        self.assertEqual(r_lista.json()['id'], 1)
+    
+    def test_203_post_ou_put_sem_dados_obrigatorios(self):
+        r_reseta = requests.post('http://localhost:5000/resetar')
+        self.assertEqual(r_reseta.status_code,200)
+        r = requests.post('http://localhost:5000/turmas',json={'id': 1, 'professor_id': 1, 'ativo': True})
+        self.assertEqual(r.status_code,400)
+        self.assertEqual(r.json()['erro'],'Campo descrição é obrigatório!')
+        r = requests.post('http://localhost:5000/turmas',json={'id': 3,'descricao':'sala 08','professor_id': 1, 'ativo': True})
+        self.assertEqual(r.status_code,201)
+        r = requests.put('http://localhost:5000/turmas/3',json={'idade': 47})
+        self.assertEqual(r.status_code,200)
+        r = requests.put('http://localhost:5000/turmas/3',json={})
+        self.assertEqual(r.status_code,400)
+        self.assertEqual(r.json()['erro'],'Dados Inválidos!')
 
 
 def runTests():
