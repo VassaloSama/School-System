@@ -70,8 +70,8 @@ class TestStringMethods(unittest.TestCase):
 
     def test_001_adiciona_alunos(self):
         #criar dois alunos (usando post na url /alunos)
-        r = requests.post('http://localhost:5000/alunos',json={'nome':'fernando','idade': 25, 'turma_id': 1, 'data_nascimento': '12/02/2023'})
-        r = requests.post('http://localhost:5000/alunos',json={'nome':'roberto','idade': 25, 'turma_id': 1, 'data_nascimento': '12/02/2023'})
+        r = requests.post('http://localhost:5000/alunos',json={'id': 1, 'nome':'fernando','idade': 25, 'turma_id': 1, 'data_nascimento': '12-02-2023', 'nota_primeiro_semestre': 5.5, 'nota_segundo_semestre': 10.0})
+        r = requests.post('http://localhost:5000/alunos',json={'id': 2, 'nome':'roberto','idade': 25, 'turma_id': 2, 'data_nascimento': '12-02-2023', 'nota_primeiro_semestre': 8.5, 'nota_segundo_semestre': 7.8})
         
         #pego a lista de alunos (do mesmo jeito que no teste 0)
         r_lista = requests.get('http://localhost:5000/alunos')
@@ -96,7 +96,7 @@ class TestStringMethods(unittest.TestCase):
 
     def test_002_aluno_por_id(self):
         #cria um aluno 'mario', com id 20
-        r = requests.post('http://localhost:5000/alunos',json={'nome':'mario','id':20})
+        r = requests.post('http://localhost:5000/alunos',json={'id': 20, 'nome':'mario','idade': 41, 'turma_id': 1, 'data_nascimento': '15-08-1983', 'nota_primeiro_semestre': 2.0, 'nota_segundo_semestre': 9.0})
 
         #consulta a url /alunos/20, pra ver se o aluno está lá
         resposta = requests.get('http://localhost:5000/alunos/20')
@@ -113,14 +113,14 @@ class TestStringMethods(unittest.TestCase):
     #e o aluno deve desaparecer
     def test_003_reseta(self):
         #criei um aluno, com post
-        r = requests.post('http://localhost:5000/alunos',json={'nome':'cicero','id':29})
+        r = requests.post('http://localhost:5000/alunos',json={'id': 100, 'nome':'marcio','idade': 41, 'turma_id': 1, 'data_nascimento': '15-08-1983', 'nota_primeiro_semestre': 2.0, 'nota_segundo_semestre': 9.0})
         #peguei a lista
         r_lista = requests.get('http://localhost:5000/alunos')
         #no momento, a lista tem que ter mais de um aluno
         self.assertTrue(len(r_lista.json()) > 0)
 
         #POST na url reseta: deveria apagar todos os dados do servidor
-        r_reset = requests.post('http://localhost:5000/reseta')
+        r_reset = requests.post('http://localhost:5000/resetar')
 
         #estou verificando se a url reseta deu pau
         #se voce ainda nao definiu ela, esse cod status nao vai ser 200
@@ -146,12 +146,12 @@ class TestStringMethods(unittest.TestCase):
     [20]'''
     def test_004_deleta(self):
         #apago tudo
-        r_reset = requests.post('http://localhost:5000/reseta')
+        r_reset = requests.post('http://localhost:5000/resetar')
         self.assertEqual(r_reset.status_code,200)
         #crio 3 alunos
-        requests.post('http://localhost:5000/alunos',json={'nome':'cicero','id':29})
-        requests.post('http://localhost:5000/alunos',json={'nome':'lucas','id':28})
-        requests.post('http://localhost:5000/alunos',json={'nome':'marta','id':27})
+        requests.post('http://localhost:5000/alunos',json={'nome':'cicero','id': 29, 'idade': 20, 'turma_id': 1, 'data_nascimento': '15-08-1983', 'nota_primeiro_semestre': 2.0, 'nota_segundo_semestre': 9.0})
+        requests.post('http://localhost:5000/alunos',json={'nome':'lucas','id': 28, 'idade': 21, 'turma_id': 1, 'data_nascimento': '20-05-1999', 'nota_primeiro_semestre': 2.0, 'nota_segundo_semestre': 9.0})
+        requests.post('http://localhost:5000/alunos',json={'nome':'marta','id': 27, 'idade': 22, 'turma_id': 1, 'data_nascimento': '13-08-1979', 'nota_primeiro_semestre': 2.0, 'nota_segundo_semestre': 9.0})
         #pego a lista completa
         r_lista = requests.get('http://localhost:5000/alunos')
         lista_retornada = r_lista.json()
@@ -167,7 +167,7 @@ class TestStringMethods(unittest.TestCase):
 
         acheiMarta = False
         acheiCicero = False
-        for aluno in lista_retornada:
+        for aluno in lista_retornada2:
             if aluno['nome'] == 'marta':
                 acheiMarta=True
             if aluno['nome'] == 'cicero':
