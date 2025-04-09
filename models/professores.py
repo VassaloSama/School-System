@@ -1,4 +1,4 @@
-from app import professores
+professores = {}
 
 class Professores:
     def __init__(self, id, nome, idade, materia):
@@ -11,11 +11,11 @@ class Professores:
     def criar_professor(dados):
         for campo in ["id", "nome", "idade", "materia"]:
             if campo not in dados:
-                raise ValueError(f"Campo {campo} é obrigatório!")
+                raise ValueError((f"Campo {campo} é obrigatório!"), 400)
 
         id = dados["id"]
         if id in professores:
-            raise ValueError("Professor com esse ID já existe!")
+            raise ValueError(("Professor com esse ID já existe!"), 400)
 
         novo_professor = {
             "id": id,
@@ -36,8 +36,11 @@ class Professores:
 
     @staticmethod
     def atualizar_professor(id, dados):
+        if not any(campo in dados for campo in ["nome", "idade", "materia"]):
+            raise ValueError(("Dados Inválidos!"), 400)
+
         if id not in professores:
-            raise ValueError("Professor não encontrado!")
+            raise ValueError(("Professor não encontrado!"), 404)
 
         professor = professores[id]
         if "nome" in dados:
@@ -52,5 +55,5 @@ class Professores:
     @staticmethod
     def deletar_professor(id):
         if id not in professores:
-            raise ValueError("Professor não encontrado!")
+            raise ValueError(("Professor não encontrado!"), 404)
         del professores[id]
