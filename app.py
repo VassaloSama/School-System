@@ -78,26 +78,6 @@ def deletar_professor(id):
     del professores[id]
     return jsonify({"mensagem": "Professor deletado com sucesso!"}), 200
 
-#### ROTA TURMAS ####
-class Turmas:
-    def __init__(self, id, descricao, professor_id, ativo):
-        if professor_id not in professores:
-            raise ValueError("Professor não encontrado!")
-
-        self.id = id
-        self.descricao = descricao
-        self.professor_id = professor_id
-        self.ativo = ativo
-
-        turmas[id] = {
-            "id": self.id,
-            "descricao": self.descricao,
-            "professor_id": self.professor_id,
-            "ativo": self.ativo
-        }
-    
-    def serialize(self):
-        return turmas[self.id]
     
 # POST TURMAS
 @app.route('/turmas', methods=['POST'])
