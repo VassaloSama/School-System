@@ -40,57 +40,6 @@ def criar_turma():
     
     return jsonify({"message": "Turma criada com sucesso"}), 201
 
-# GET ALL TURMAS
-@app.route('/turmas', methods=['GET'])
-def listar_turmas():
-    return jsonify(list(turmas.values())), 200
- 
-# GET BY ID TURMAS
-@app.route('/turmas/<int:id>', methods=['GET'])
-def obter_turma(id):
-    if id not in turmas:
-        return jsonify({"erro": "Turma não encontrada!"}), 404
-    
-    return jsonify(turmas[id]), 200
-
-# PUT TURMAS
-@app.route('/turmas/<int:id>', methods=['PUT'])
-def atualizar_turma(id):
-    dados = request.json
-
-    if id not in turmas:
-        return jsonify({"erro": "Turma não encontrada!"}), 404
-    print("teste")
-    
-    if not any(campo in dados for campo in ["descricao", "professor_id", "ativo"]):
-        return jsonify({"erro": "Dados Inválidos!"}), 400
-    
-    professor_id = dados.get("professor_id", turmas[id]["professor_id"])
-
-    if professor_id not in professores:
-        return jsonify({"erro": "Professor não encontrado!"}), 404
-    
-    print("teste2")
-
-    if "descricao" in dados:
-        turmas[id]["descricao"] = dados["descricao"]
-    if "professor_id" in dados:
-        turmas[id]["professor_id"] = dados["professor_id"]
-    if "ativo" in dados:
-        turmas[id]["ativo"] = dados["ativo"]
-
-    
-    return jsonify({"message": "Turma atualizada com sucesso"}), 200
-
-# DELETE TURMAS
-@app.route('/turmas/<int:id>', methods=['DELETE'])
-def deletar_turma(id):
-    if id not in turmas:
-        return jsonify({"erro": "Turma não encontrada!"}), 404
-    
-    del turmas[id]
-    return jsonify({"mensagem": "Turma deletada com sucesso!"}), 200
-
 
 # POST ALUNOS
 @app.route('/alunos', methods=['POST'])
