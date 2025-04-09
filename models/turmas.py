@@ -1,4 +1,6 @@
-from app import turmas, professores
+from models.professores import professores
+
+turmas = {}
 
 class Turmas:
     def __init__(self, id, descricao, professor_id, ativo):
@@ -11,14 +13,14 @@ class Turmas:
     def criar_turma(dados):
         for campo in ["id", "descricao", "professor_id", "ativo"]:
             if campo not in dados:
-                raise ValueError(f"Campo {campo} é obrigatório!")
+                raise ValueError((f"Campo {campo} é obrigatório!"), 400)
 
         id = dados["id"]
         if id in turmas:
-            raise ValueError("Turma com esse ID já existe!")
+            raise ValueError(("Turma com esse ID já existe!"), 400)
 
         if dados["professor_id"] not in professores:
-            raise ValueError("Professor não encontrado!")
+            raise ValueError(("Professor não encontrado!"), 404)
 
         nova_turma = {
             "id": id,
@@ -40,8 +42,11 @@ class Turmas:
 
     @staticmethod
     def atualizar_turma(id, dados):
+        if not any(campo in dados for campo in ["descricao", "professor_id", "ativo"]):
+            raise ValueError(("Dados Inválidos!"), 400)
+
         if id not in turmas:
-            raise ValueError("Turma não encontrada!")
+            raise ValueError(("Turma não encontrada!"), 404)
 
         turma = turmas[id]
 
@@ -49,7 +54,7 @@ class Turmas:
             turma["descricao"] = dados["descricao"]
         if "professor_id" in dados:
             if dados["professor_id"] not in professores:
-                raise ValueError("Professor não encontrado!")
+                raise ValueError(("Professor não encontrado!"), 404)
             turma["professor_id"] = dados["professor_id"]
         if "ativo" in dados:
             turma["ativo"] = dados["ativo"]
@@ -59,5 +64,5 @@ class Turmas:
     @staticmethod
     def deletar_turma(id):
         if id not in turmas:
-            raise ValueError("Turma não encontrada!")
+            raise ValueError(("Turma não encontrada!"), 404)
         del turmas[id]

@@ -1,6 +1,5 @@
 from flask import request, jsonify, Blueprint
 from models.turmas import Turmas
-from app import turmas
 
 turmasApp = Blueprint('turma', __name__)
 
@@ -12,7 +11,7 @@ def post_turma():
         nova_turma = Turmas.criar_turma(dados)
         return jsonify({"message": "Turma criada com sucesso"}), 201
     except ValueError as e:
-        return jsonify({"erro": str(e)}), 400
+        return jsonify({"erro": str(e.args[0])}), e.args[1]
 
 # GET ALL TURMAS
 @turmasApp.route('/turmas', methods=['GET'])
@@ -35,7 +34,7 @@ def atualizar_turma(id):
         turma_atualizada = Turmas.atualizar_turma(id, dados)
         return jsonify({"message": "Turma atualizada com sucesso"}), 200
     except ValueError as e:
-        return jsonify({"erro": str(e)}), 400
+        return jsonify({"erro": str(e.args[0])}), e.args[1]
 
 # DELETE TURMA
 @turmasApp.route('/turmas/<int:id>', methods=['DELETE'])
@@ -44,4 +43,4 @@ def deletar_turma(id):
         Turmas.deletar_turma(id)
         return jsonify({"mensagem": "Turma deletada com sucesso!"}), 200
     except ValueError as e:
-        return jsonify({"erro": str(e)}), 404
+        return jsonify({"erro": str(e.args[0])}), e.args[1]
