@@ -1,4 +1,6 @@
-from app import alunos, turmas
+from models.turmas import turmas
+
+alunos = {}
 
 class Alunos:
     def __init__(self, id, nome, idade, turma_id, data_nascimento, nota_primeiro_semestre, nota_segundo_semestre):
@@ -19,14 +21,14 @@ class Alunos:
         ]
         for campo in campos_obrigatorios:
             if campo not in dados:
-                raise ValueError(f"Campo {campo} é obrigatório!")
+                raise ValueError((f"Campo {campo} é obrigatório!"), 400)
 
         id = dados["id"]
         if id in alunos:
-            raise ValueError("Aluno com esse ID já existe!")
+            raise ValueError(("Aluno com esse ID já existe!"), 400)
 
         if dados["turma_id"] not in turmas:
-            raise ValueError("Turma não encontrada!")
+            raise ValueError(("Turma não encontrada!"), 400)
 
         nota1 = float(dados["nota_primeiro_semestre"])
         nota2 = float(dados["nota_segundo_semestre"])
@@ -57,7 +59,7 @@ class Alunos:
     @staticmethod
     def atualizar_aluno(id, dados):
         if id not in alunos:
-            raise ValueError("Aluno não encontrado!")
+            raise ValueError(("Aluno não encontrado!"), 404)
 
         aluno = alunos[id]
 
@@ -86,5 +88,5 @@ class Alunos:
     @staticmethod
     def deletar_aluno(id):
         if id not in alunos:
-            raise ValueError("Aluno não encontrado!")
+            raise ValueError(("Aluno não encontrado!"), 404)
         del alunos[id]

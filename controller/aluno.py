@@ -1,6 +1,5 @@
 from flask import request, jsonify, Blueprint
 from models.alunos import Alunos
-from app import alunos
 
 alunosApp = Blueprint('aluno', __name__)
 
@@ -12,7 +11,7 @@ def post_aluno():
         novo_aluno = Alunos.criar_aluno(dados)
         return jsonify({"message": "Aluno criado com sucesso"}), 201
     except ValueError as e:
-        return jsonify({"erro": str(e)}), 400
+        return jsonify({"erro": str(e.args[0])}), e.args[1]
 
 # GET ALL ALUNOS
 @alunosApp.route('/alunos', methods=['GET'])
@@ -35,7 +34,7 @@ def atualizar_aluno(id):
         aluno_atualizado = Alunos.atualizar_aluno(id, dados)
         return jsonify({"message": "Aluno atualizado com sucesso"}), 200
     except ValueError as e:
-        return jsonify({"erro": str(e)}), 400
+        return jsonify({"erro": str(e.args[0])}), e.args[1]
 
 # DELETE ALUNO
 @alunosApp.route('/alunos/<int:id>', methods=['DELETE'])
@@ -44,4 +43,4 @@ def deletar_aluno(id):
         Alunos.deletar_aluno(id)
         return jsonify({"mensagem": "Aluno deletado com sucesso!"}), 200
     except ValueError as e:
-        return jsonify({"erro": str(e)}), 404
+        return jsonify({"erro": str(e.args[0])}), e.args[1]
