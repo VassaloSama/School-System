@@ -25,4 +25,4 @@ def resetar_dados():
     
 # Rodar o servidor
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(host = app.config["HOST"], port = app.config['PORT'], debug = app.config['DEBUG'])
