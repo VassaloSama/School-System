@@ -37,10 +37,10 @@ class Alunos(db.Model):
                 raise ValueError((f"Campo {campo} é obrigatório!"), 400)
 
         if Alunos.query.get(dados["id"]):
-            raise ValueError(("Aluno com esse ID já existe!"), 401)
+            raise ValueError(("Aluno com esse ID já existe!"), 400)
 
         if not Turmas.query.get(dados["turma_id"]):
-            raise ValueError(("Turma não encontrada!"), 402)
+            raise ValueError(("Turma não encontrada!"), 400)
 
         nota1 = float(dados["nota_primeiro_semestre"])
         nota2 = float(dados["nota_segundo_semestre"])
@@ -68,12 +68,12 @@ class Alunos(db.Model):
 
     @staticmethod
     def listar_alunos():
-        return [Alunos.serialize() for aluno in Alunos.query.all()]
+        return [aluno.serialize() for aluno in Alunos.query.all()]
 
     @staticmethod
     def obter_aluno(id):
         aluno = Alunos.query.get(id)
-        return Alunos.serialize() if aluno else None
+        return aluno.serialize() if aluno else None
 
     @staticmethod
     def atualizar_aluno(id, dados):
@@ -82,22 +82,22 @@ class Alunos(db.Model):
             raise ValueError(("Aluno não encontrado!"), 404)
 
         if "nome" in dados:
-            Alunos.nome = dados["nome"]
+            aluno.nome = dados["nome"]
         if "idade" in dados:
-            Alunos.idade = dados["idade"]
+            aluno.idade = dados["idade"]
         if "turma_id" in dados:
             if not Turmas.query.get(dados["turma_id"]):
                 raise ValueError("Turma não encontrada!", 400)
-            Alunos.turma_id = dados["turma_id"]
+            aluno.turma_id = dados["turma_id"]
         if "data_nascimento" in dados:
             try:
-                Alunos.data_nascimento = datetime.strptime(dados["data_nascimento"], "%d/%m/%Y").date()
+                aluno.data_nascimento = datetime.strptime(dados["data_nascimento"], "%d/%m/%Y").date()
             except ValueError:
                 raise ValueError("Formato de data inválido! Use dd/mm/aaaa", 400)
         if "nota_primeiro_semestre" in dados:
-            Alunos.nota_primeiro_semestre = float(dados["nota_primeiro_semestre"])
+            aluno.nota_primeiro_semestre = float(dados["nota_primeiro_semestre"])
         if "nota_segundo_semestre" in dados:
-            Alunos.nota_segundo_semestre = float(dados["nota_segundo_semestre"])
+            aluno.nota_segundo_semestre = float(dados["nota_segundo_semestre"])
 
         # Recalcular média
         nota1 = Alunos.nota_primeiro_semestre or 0
