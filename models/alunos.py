@@ -1,8 +1,8 @@
 from config import db
-from models.turmas import Turma
+from models.turmas import Turmas
 from datetime import datetime
 
-class Aluno(db.Model):
+class Alunos(db.Model):
     __tablename__ = 'alunos'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -36,22 +36,22 @@ class Aluno(db.Model):
             if campo not in dados:
                 raise ValueError((f"Campo {campo} é obrigatório!"), 400)
 
-        if Aluno.query.get(dados["id"]):
-            raise ValueError(("Aluno com esse ID já existe!"), 400)
+        if Alunos.query.get(dados["id"]):
+            raise ValueError(("Aluno com esse ID já existe!"), 401)
 
-        if not Turma.query.get(dados["turma_id"]):
-            raise ValueError(("Turma não encontrada!"), 400)
+        if not Turmas.query.get(dados["turma_id"]):
+            raise ValueError(("Turma não encontrada!"), 402)
 
         nota1 = float(dados["nota_primeiro_semestre"])
         nota2 = float(dados["nota_segundo_semestre"])
         media = (nota1 + nota2) / 2
 
         try:
-            data_nasc = datetime.strptime(dados["data_nascimento"], "%d/%m/%Y").date()
+            data_nasc = datetime.strptime(dados["data_nascimento"], "%d-%m-%Y").date()
         except ValueError:
-            raise ValueError("Formato de data inválido! Use dd/mm/aaaa", 400)
+            raise ValueError("Formato de data inválido! Use dd-mm-aaaa", 400)
 
-        novo_aluno = Aluno(
+        novo_aluno = Alunos(
             id=dados["id"],
             nome=dados["nome"],
             idade=dados["idade"],
@@ -68,48 +68,48 @@ class Aluno(db.Model):
 
     @staticmethod
     def listar_alunos():
-        return [aluno.serialize() for aluno in Aluno.query.all()]
+        return [Alunos.serialize() for aluno in Alunos.query.all()]
 
     @staticmethod
     def obter_aluno(id):
-        aluno = Aluno.query.get(id)
-        return aluno.serialize() if aluno else None
+        aluno = Alunos.query.get(id)
+        return Alunos.serialize() if aluno else None
 
     @staticmethod
     def atualizar_aluno(id, dados):
-        aluno = Aluno.query.get(id)
+        aluno = Alunos.query.get(id)
         if not aluno:
             raise ValueError(("Aluno não encontrado!"), 404)
 
         if "nome" in dados:
-            aluno.nome = dados["nome"]
+            Alunos.nome = dados["nome"]
         if "idade" in dados:
-            aluno.idade = dados["idade"]
+            Alunos.idade = dados["idade"]
         if "turma_id" in dados:
-            if not Turma.query.get(dados["turma_id"]):
+            if not Turmas.query.get(dados["turma_id"]):
                 raise ValueError("Turma não encontrada!", 400)
-            aluno.turma_id = dados["turma_id"]
+            Alunos.turma_id = dados["turma_id"]
         if "data_nascimento" in dados:
             try:
-                aluno.data_nascimento = datetime.strptime(dados["data_nascimento"], "%d/%m/%Y").date()
+                Alunos.data_nascimento = datetime.strptime(dados["data_nascimento"], "%d/%m/%Y").date()
             except ValueError:
                 raise ValueError("Formato de data inválido! Use dd/mm/aaaa", 400)
         if "nota_primeiro_semestre" in dados:
-            aluno.nota_primeiro_semestre = float(dados["nota_primeiro_semestre"])
+            Alunos.nota_primeiro_semestre = float(dados["nota_primeiro_semestre"])
         if "nota_segundo_semestre" in dados:
-            aluno.nota_segundo_semestre = float(dados["nota_segundo_semestre"])
+            Alunos.nota_segundo_semestre = float(dados["nota_segundo_semestre"])
 
         # Recalcular média
-        nota1 = aluno.nota_primeiro_semestre or 0
-        nota2 = aluno.nota_segundo_semestre or 0
-        aluno.media_final = (nota1 + nota2) / 2
+        nota1 = Alunos.nota_primeiro_semestre or 0
+        nota2 = Alunos.nota_segundo_semestre or 0
+        Alunos.media_final = (nota1 + nota2) / 2
 
         db.session.commit()
-        return aluno.serialize()
+        return Alunos.serialize()
 
     @staticmethod
     def deletar_aluno(id):
-        aluno = Aluno.query.get(id)
+        aluno = Alunos.query.get(id)
         if not aluno:
             raise ValueError(("Aluno não encontrado!"), 404)
         db.session.delete(aluno)
