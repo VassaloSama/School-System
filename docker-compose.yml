@@ -7,6 +7,7 @@ services:
       - .:/app
     depends_on:
       - db
+    command: sh -c "sleep 20 && python app.py"
   db:
     image: mysql:8.0
     environment:
