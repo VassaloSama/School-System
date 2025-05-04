@@ -19,9 +19,9 @@ with app.app_context():
 def resetar_dados():
     from models.professores import Professores
     from models.turmas import Turmas
-    # from models.alunos import Aluno
+    from models.alunos import Alunos
     
-    # Aluno.query.delete()
+    Alunos.query.delete()
     Turmas.query.delete()
     Professores.query.delete()
     db.session.commit()
