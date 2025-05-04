@@ -1,6 +1,5 @@
-from flask import Flask, jsonify, request
+from flask import jsonify, request
 from datetime import datetime
-
 
 from config import app, db
 from controller.professor import professoresApp
@@ -18,13 +17,13 @@ with app.app_context():
 #### ROTA RESETAR DADOS ####
 @app.route('/resetar', methods=['POST'])
 def resetar_dados():
-    from models.professores import Professor
-    from models.turmas import Turma
-    from models.alunos import Aluno
+    from models.professores import Professores
+    from models.turmas import Turmas
+    # from models.alunos import Aluno
     
-    Aluno.query.delete()
-    Turma.query.delete()
-    Professor.query.delete()
+    # Aluno.query.delete()
+    Turmas.query.delete()
+    Professores.query.delete()
     db.session.commit()
 
     return jsonify({"mensagem": "Dados resetados com sucesso!"}), 200
