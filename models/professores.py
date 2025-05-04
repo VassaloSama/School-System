@@ -38,12 +38,12 @@ class Professores(db.Model):
 
     @staticmethod
     def listar_professores():
-        return [professor.to_dict() for professor in Professores.query.all()]
+        return [professor.serialize() for professor in Professores.query.all()]
 
     @staticmethod
     def obter_professor(id):
         professor = Professores.query.get(id)
-        return professor.to_dict() if professor else None
+        return professor.serialize() if professor else None
 
     @staticmethod
     def atualizar_professor(id, dados):
@@ -62,7 +62,7 @@ class Professores(db.Model):
             professor.materia = dados["materia"]
 
         db.session.commit()
-        return professor.to_dict()
+        return professor.serialize()
 
     @staticmethod
     def deletar_professor(id):
