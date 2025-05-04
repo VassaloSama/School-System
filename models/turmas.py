@@ -1,13 +1,24 @@
-from models.professores import professores
+from config import db
+from models.professores import Professores
 
-turmas = {}
+class Turmas(db.Model):
+    __tablename__ = 'turmas'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    descricao = db.Column(db.String(100), nullable=False)
+    professor_id = db.Column(db.Integer, db.ForeignKey('professores.id'), nullable=False)
+    ativo = db.Column(db.Boolean, nullable=False)
 
-class Turmas:
-    def __init__(self, id, descricao, professor_id, ativo):
-        self.id = id
-        self.descricao = descricao
-        self.professor_id = professor_id
-        self.ativo = ativo
+    professor = db.relationship('Professores', backref=db.backref('turmas', lazy=True))
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "descricao": self.descricao,
+            "professor_id": self.professor_id,
+            "ativo": self.ativo,
+            "professor": self.professor.serialize() if self.professor else None
+        }
 
     @staticmethod
     def criar_turma(dados):
@@ -15,54 +26,59 @@ class Turmas:
             if campo not in dados:
                 raise ValueError((f"Campo {campo} é obrigatório!"), 400)
 
-        id = dados["id"]
-        if id in turmas:
+        if Turmas.query.get(dados["id"]):
             raise ValueError(("Turma com esse ID já existe!"), 400)
-
-        if dados["professor_id"] not in professores:
+        
+        professor = Professores.query.get(dados["professor_id"])
+        if not professor:
             raise ValueError(("Professor não encontrado!"), 404)
 
-        nova_turma = {
-            "id": id,
-            "descricao": dados["descricao"],
-            "professor_id": dados["professor_id"],
-            "ativo": dados["ativo"]
-        }
+        nova_turma = Turmas(
+            id=dados["id"],
+            descricao=dados["descricao"],
+            professor_id=dados["professor_id"],
+            ativo=dados["ativo"]
+        )
 
-        turmas[id] = nova_turma
-        return nova_turma
+        db.session.add(nova_turma)
+        db.session.commit()
+        return nova_turma.serialize()
 
     @staticmethod
     def listar_turmas():
-        return list(turmas.values())
+        return [turma.serialize() for turma in Turmas.query.all()]
 
     @staticmethod
     def obter_turma(id):
-        return turmas.get(id)
+        turma = Turmas.query.get(id)
+        return turma.serialize() if turma else None
 
     @staticmethod
     def atualizar_turma(id, dados):
         if not any(campo in dados for campo in ["descricao", "professor_id", "ativo"]):
             raise ValueError(("Dados Inválidos!"), 400)
 
-        if id not in turmas:
+        turma = Turmas.query.get(id)
+
+        if not turma:
             raise ValueError(("Turma não encontrada!"), 404)
 
-        turma = turmas[id]
-
         if "descricao" in dados:
-            turma["descricao"] = dados["descricao"]
+            turma.descricao = dados["descricao"]
         if "professor_id" in dados:
-            if dados["professor_id"] not in professores:
+            if not Professores.query.get(dados["professor_id"]):
                 raise ValueError(("Professor não encontrado!"), 404)
-            turma["professor_id"] = dados["professor_id"]
+            turma.professor_id = dados["professor_id"]
         if "ativo" in dados:
-            turma["ativo"] = dados["ativo"]
+            turma.ativo = dados["ativo"]
 
+        db.session.commit()
         return turma
 
     @staticmethod
     def deletar_turma(id):
-        if id not in turmas:
+        turma = Turmas.query.get(id)
+        if not turma:
             raise ValueError(("Turma não encontrada!"), 404)
-        del turmas[id]
+        db.session.delete(turma)
+        db.session.commit()
