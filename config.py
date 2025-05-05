@@ -10,7 +10,7 @@ app.config['DEBUG'] = True
 # Configuração do Swagger
 app.config['SWAGGER'] = {
     'title': 'API Escola',
-    'uiversion': 1
+    'uiversion': 3
 }
 swagger = Swagger(app)
 
