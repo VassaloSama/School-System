@@ -1,0 +1,17 @@
+tags:
+  - Professores
+summary: Lista todos os professores
+responses:
+  200:
+    description: Lista de professores
+    schema:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+          nome:
+            type: string
+          materia:
+            type: string

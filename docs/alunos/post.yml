@@ -1,0 +1,25 @@
+tags:
+  - Alunos
+summary: Cria um novo aluno
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      properties:
+        nome:
+          type: string
+        idade:
+          type: integer
+        turma:
+          type: string
+      required:
+        - nome
+        - idade
+        - turma
+responses:
+  201:
+    description: Aluno criado com sucesso
+  400:
+    description: Erro na criação do aluno

@@ -1,0 +1,22 @@
+tags:
+  - Turmas
+summary: Cria uma nova turma
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      properties:
+        nome:
+          type: string
+        serie:
+          type: string
+      required:
+        - nome
+        - serie
+responses:
+  201:
+    description: Turma criada com sucesso
+  400:
+    description: Erro na criação da turma

@@ -6,6 +6,7 @@ from controller.professor import professoresApp
 from controller.turma import turmasApp
 from controller.aluno import alunosApp
 
+
 app.register_blueprint(professoresApp)
 app.register_blueprint(turmasApp)
 app.register_blueprint(alunosApp)

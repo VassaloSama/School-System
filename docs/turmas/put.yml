@@ -1,0 +1,24 @@
+tags:
+  - Turmas
+summary: Atualiza uma turma
+parameters:
+  - name: id
+    in: path
+    type: integer
+    required: true
+    description: ID da turma
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      properties:
+        nome:
+          type: string
+        serie:
+          type: string
+responses:
+  200:
+    description: Turma atualizada com sucesso
+  400:
+    description: Erro na atualização da turma

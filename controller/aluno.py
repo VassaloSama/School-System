@@ -1,10 +1,11 @@
 from flask import request, jsonify, Blueprint
 from models.alunos import Alunos
+from flasgger import swag_from
 
 alunosApp = Blueprint('aluno', __name__)
 
-# POST ALUNO
 @alunosApp.route('/alunos', methods=['POST'])
+@swag_from('../docs/alunos/post.yml')
 def post_aluno():
     dados = request.json
     try:
@@ -13,31 +14,31 @@ def post_aluno():
     except ValueError as e:
         return jsonify({"erro": str(e.args[0])}), e.args[1]
 
-# GET ALL ALUNOS
 @alunosApp.route('/alunos', methods=['GET'])
+@swag_from('../docs/alunos/get_all.yml')
 def listar_alunos():
     return jsonify(Alunos.listar_alunos()), 200
 
-# GET BY ID ALUNO
 @alunosApp.route('/alunos/<int:id>', methods=['GET'])
+@swag_from('../docs/alunos/get_by_id.yml')
 def obter_aluno(id):
     aluno = Alunos.obter_aluno(id)
     if not aluno:
         return jsonify({"erro": "Aluno não encontrado!"}), 404
     return jsonify(aluno), 200
 
-# PUT ALUNO
 @alunosApp.route('/alunos/<int:id>', methods=['PUT'])
+@swag_from('../docs/alunos/put.yml')
 def atualizar_aluno(id):
     dados = request.json
     try:
-        aluno_atualizado = Alunos.atualizar_aluno(id, dados)
+        Alunos.atualizar_aluno(id, dados)
         return jsonify({"message": "Aluno atualizado com sucesso"}), 200
     except ValueError as e:
         return jsonify({"erro": str(e.args[0])}), e.args[1]
 
-# DELETE ALUNO
 @alunosApp.route('/alunos/<int:id>', methods=['DELETE'])
+@swag_from('../docs/alunos/delete.yml')
 def deletar_aluno(id):
     try:
         Alunos.deletar_aluno(id)
