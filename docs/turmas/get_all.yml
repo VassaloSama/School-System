@@ -1,0 +1,17 @@
+tags:
+  - Turmas
+summary: Lista todas as turmas
+responses:
+  200:
+    description: Lista de turmas
+    schema:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+          nome:
+            type: string
+          serie:
+            type: string

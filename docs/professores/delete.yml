@@ -1,0 +1,14 @@
+tags:
+  - Professores
+summary: Deleta um professor pelo ID
+parameters:
+  - name: id
+    in: path
+    type: integer
+    required: true
+    description: ID do professor
+responses:
+  200:
+    description: Professor deletado com sucesso
+  400:
+    description: Erro ao deletar o professor

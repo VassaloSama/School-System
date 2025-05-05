@@ -1,11 +1,20 @@
-professores = {}
+from config import db
 
-class Professores:
-    def __init__(self, id, nome, idade, materia):
-        self.id = id
-        self.nome = nome
-        self.idade = idade
-        self.materia = materia
+class Professores(db.Model):
+    __tablename__ = 'professores'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(100), nullable=False)
+    idade = db.Column(db.Integer, nullable=False)
+    materia = db.Column(db.String(100), nullable=False)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "nome": self.nome,
+            "idade": self.idade,
+            "materia": self.materia
+        }
 
     @staticmethod
     def criar_professor(dados):
@@ -13,47 +22,52 @@ class Professores:
             if campo not in dados:
                 raise ValueError((f"Campo {campo} é obrigatório!"), 400)
 
-        id = dados["id"]
-        if id in professores:
+        if Professores.query.get(dados["id"]):
             raise ValueError(("Professor com esse ID já existe!"), 400)
 
-        novo_professor = {
-            "id": id,
-            "nome": dados["nome"],
-            "idade": dados["idade"],
-            "materia": dados["materia"]
-        }
-        professores[id] = novo_professor
-        return novo_professor
+        novo_professor = Professores(
+            id=dados["id"],
+            nome=dados["nome"],
+            idade=dados["idade"],
+            materia=dados["materia"]
+        )
+        db.session.add(novo_professor)
+        db.session.commit()
+
+        return novo_professor.serialize()
 
     @staticmethod
     def listar_professores():
-        return list(professores.values())
+        return [professor.serialize() for professor in Professores.query.all()]
 
     @staticmethod
     def obter_professor(id):
-        return professores.get(id)
+        professor = Professores.query.get(id)
+        return professor.serialize() if professor else None
 
     @staticmethod
     def atualizar_professor(id, dados):
         if not any(campo in dados for campo in ["nome", "idade", "materia"]):
             raise ValueError(("Dados Inválidos!"), 400)
 
-        if id not in professores:
+        professor = Professores.query.get(id)
+        if not professor:
             raise ValueError(("Professor não encontrado!"), 404)
 
-        professor = professores[id]
         if "nome" in dados:
-            professor["nome"] = dados["nome"]
+            professor.nome = dados["nome"]
         if "idade" in dados:
-            professor["idade"] = dados["idade"]
+            professor.idade = dados["idade"]
         if "materia" in dados:
-            professor["materia"] = dados["materia"]
+            professor.materia = dados["materia"]
 
-        return professor
+        db.session.commit()
+        return professor.serialize()
 
     @staticmethod
     def deletar_professor(id):
-        if id not in professores:
+        professor = Professores.query.get(id)
+        if not professor:
             raise ValueError(("Professor não encontrado!"), 404)
-        del professores[id]
+        db.session.delete(professor)
+        db.session.commit()

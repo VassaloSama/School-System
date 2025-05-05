@@ -5,3 +5,15 @@ services:
       - "5000:5000"
     volumes:
       - .:/app
+    depends_on:
+      - db
+    command: sh -c "sleep 20 && python app.py"
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: school-system
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: SenhaForte123
+    ports:
+      - "3306:3306"
