@@ -1,0 +1,23 @@
+tags:
+  - Professores
+summary: Retorna um professor pelo ID
+parameters:
+  - name: id
+    in: path
+    type: integer
+    required: true
+    description: ID do professor
+responses:
+  200:
+    description: Professor encontrado
+    schema:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        materia:
+          type: string
+  404:
+    description: Professor não encontrado

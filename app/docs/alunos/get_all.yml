@@ -1,0 +1,19 @@
+tags:
+  - Alunos
+summary: Lista todos os alunos
+responses:
+  200:
+    description: Lista de alunos
+    schema:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+          nome:
+            type: string
+          idade:
+            type: integer
+          turma:
+            type: string

@@ -1,0 +1,26 @@
+tags:
+  - Alunos
+summary: Atualiza um aluno
+parameters:
+  - name: id
+    in: path
+    type: integer
+    required: true
+    description: ID do aluno
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      properties:
+        nome:
+          type: string
+        idade:
+          type: integer
+        turma:
+          type: string
+responses:
+  200:
+    description: Aluno atualizado com sucesso
+  400:
+    description: Erro na atualização do aluno
