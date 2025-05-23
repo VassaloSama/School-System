@@ -334,8 +334,8 @@ class TestStringMethods(unittest.TestCase):
     #     self.assertEqual(len(r_lista_alunos.json()),2)
 
     def test_101_adiciona_professores(self):
-        r = requests.post('http://localhost:5000/professores',json={'id': 1,'nome':'fernando','idade':27, 'materia': 'matematica'})
-        r = requests.post('http://localhost:5000/professores',json={'id': 2,'nome':'roberto','idade':29, 'materia': 'devops'})
+        r = requests.post('http://localhost:5000/professores',json={'id': 1,'nome':'fernando','idade':27, 'materia': 'matematica', 'observacoes': 'professor de matematica muito profissional'})
+        r = requests.post('http://localhost:5000/professores',json={'id': 2,'nome':'roberto','idade':29, 'materia': 'devops', 'observacoes': 'professor de devops muito legal'})
         r_lista = requests.get('http://localhost:5000/professores')
         achei_fernando = False
         achei_roberto = False
@@ -372,9 +372,10 @@ class TestStringMethods(unittest.TestCase):
         requests.post('http://localhost:5000/professores',json={'id': 7, 'nome':'lucas','idade':28, 'materia':'quimica'})
         r_antes = requests.get('http://localhost:5000/professores/7')
         self.assertEqual(r_antes.json()['nome'],'lucas')
-        requests.put('http://localhost:5000/professores/7', json={'nome':'lucas mendes'})
+        requests.put('http://localhost:5000/professores/7', json={'nome':'lucas mendes', 'observacoes': 'professor de quimica muito legal'})
         r_depois = requests.get('http://localhost:5000/professores/7')
         self.assertEqual(r_depois.json()['nome'],'lucas mendes')
+        self.assertEqual(r_depois.json()['observacoes'],'professor de quimica muito legal')
 
     def test_105_id_inexistente(self):
         r_reseta = requests.post('http://localhost:5000/resetar')
