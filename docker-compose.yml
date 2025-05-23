@@ -1,5 +1,5 @@
 services:
-  web:
+  school-system:
     build: .
     ports:
       - "5000:5000"
