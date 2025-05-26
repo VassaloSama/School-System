@@ -12,6 +12,8 @@ parameters:
           type: string
         materia:
           type: string
+        observacoes:
+          type: string
       required:
         - nome
         - materia
