@@ -57,6 +57,8 @@ class TestStringMethods(unittest.TestCase):
 
     def test_000_alunos_retorna_lista(self):
         #apago tudo
+        r_reset_salas = requests.post('http://localhost:5001/salas/resetar')
+        self.assertEqual(r_reset_salas.status_code,200)
         r_reset = requests.post('http://localhost:5000/resetar')
         self.assertEqual(r_reset.status_code,200)
         #pega a url /alunos, com o verbo get
