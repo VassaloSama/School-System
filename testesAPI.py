@@ -57,6 +57,8 @@ class TestStringMethods(unittest.TestCase):
 
     def test_000_alunos_retorna_lista(self):
         #apago tudo
+        # r_reset_atividades = requests.post('http://localhost:5002/atividades/resetar')
+        # self.assertEqual(r_reset_atividades.status_code,200)
         r_reset_salas = requests.post('http://localhost:5001/salas/resetar')
         self.assertEqual(r_reset_salas.status_code,200)
         r_reset = requests.post('http://localhost:5000/resetar')
