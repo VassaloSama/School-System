@@ -8,7 +8,6 @@ professoresApp = Blueprint('professor',__name__)
 @professoresApp.route('/professores', methods=['POST'])
 @swag_from('../docs/professores/post.yml')
 def post_professor():
-    
     dados = request.json
     try:
         novo_professor = Professores.criar_professor(dados)
